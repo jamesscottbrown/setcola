@@ -87,8 +87,8 @@ function collectSet(elements, definition) {
           
           } else if(expr.indexOf('min') !== -1) {
           
-            const source = expr.split(/\(|,|\)/g)[2];
-            const property = expr.split(/\(|,|\)/g)[1].replace(/'/g, '');
+            const source = expr.split(/[(,)]/g)[2];
+            const property = expr.split(/[(,)]/g)[1].replace(/'/g, '');
 
             let node;
             switch(source) {
