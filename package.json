@@ -6,10 +6,10 @@
   "repository": "https://github.com/uwdata/setcola.git",
   "author": "Jane Hoffswell <jhoffs@cs.washington.edu>, Alan Borning, and Jeffrey Heer",
   "license": "MIT",
-  "build": "rollup -c",
 
   "scripts": {
-      "test": "npm build && jest"
+      "build": "rollup -c",
+      "test": "npm run build && jest"
   },
 
   "devDependencies": {
