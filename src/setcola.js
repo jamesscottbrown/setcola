@@ -141,7 +141,7 @@ function generateGuides(guide) {
   if(guide.hasOwnProperty('name')) {
     const found = _nodes.filter(node => { return node.name === guide.name; });
     if(found.length > 0) {
-      console.error('A node with the name \'' + guide.name + '\' already exists.');
+      console.error(`A node with the name '${guide.name}' already exists.`);
     } else {
       node.name = guide.name;
     }
@@ -162,7 +162,7 @@ function generateSets(constraintDef) {
   } else if(constraintDef.from) {
     source = computeSets(_nodes, constraintDef.from, _sets);
   }
-  if(!constraintDef.name) constraintDef.name = '_set' + ++INDEX;
+  if(!constraintDef.name) constraintDef.name = `_set${++INDEX}`;
   return {'name': constraintDef.name, 'sets': computeSets(source, constraintDef.sets, _sets)}
 };
 

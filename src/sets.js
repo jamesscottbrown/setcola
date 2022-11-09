@@ -114,7 +114,7 @@ function collectSet(elements, definition) {
             }
 
           } else {
-            console.error('Unknown collection parameter \'' + expr + '\'');
+            console.error(`Unknown collection parameter '${expr}'`);
           }
       }
     });

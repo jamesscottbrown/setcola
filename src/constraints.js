@@ -7,7 +7,7 @@ export function computeConstraints(elements, definition, cid, gap, graphNodes, g
   _gap = gap;
 
   let results = [];
-  const ID = cid + '_' + definition.constraint;
+  const ID = `${cid}_${definition.constraint}`;
   switch(definition.constraint) {
     case 'align':
       results = results.concat(alignment(elements, definition, ID));
@@ -31,7 +31,7 @@ export function computeConstraints(elements, definition, cid, gap, graphNodes, g
       padding(elements, definition, ID);
       break;
     default:
-      console.error('Unknown constraint type \'' + definition.type + '\'');
+      console.error(`Unknown constraint type '${definition.type}'`);
   };
 
   return results;
@@ -149,7 +149,7 @@ function orderSets(elements, definition, cid) {
       'height': nodeSize,
       'padding': 0
     };
-    node.name = cid + '_boundary_' + i;
+    node.name = `${cid}_boundary_${i}`;
 
     const tempOffset = _graphNodes().filter(node => { return node._temp; }).length;
 
@@ -190,7 +190,7 @@ function orderSets(elements, definition, cid) {
 };
 
 function boundaryConstraints(boundaries, definition, cid) {
-  const id = cid + '_boundaryDistance';
+  const id = `${cid}_boundaryDistance`;
   const c = [];
   boundaries.forEach((boundary, index) => {
 
@@ -244,7 +244,7 @@ function position(elements, definition, cid) {
         results.push(CoLaPosition(guide, nodes[i], 'y', cid, gap));
         break;
       default:
-        console.error('Unknown position: \'' + definition.position + '\'');
+        console.error(`Unknown position: '${definition.position}'`);
     };
   };
 
@@ -283,7 +283,7 @@ function circle(elements, definition, cid) {
   let center;
   switch(definition.around) {
     case 'center':
-      center = {'name': cid + '_center', '_temp': true, '_cid': cid};
+      center = {'name': `${cid}_center`, '_temp': true, '_cid': cid};
       _graphNodes(_graphNodes().concat([center]));
       break;
     default:
