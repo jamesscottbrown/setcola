@@ -149,7 +149,7 @@ function generateGuides(guide) {
     console.error('Guide must have a name: ', guide);
   }
   
-  // Save the guide and get it's index.
+  // Save the guide and get its index.
   _nodes.push(node);
   node._id = _nodes.indexOf(node);
   return node;
