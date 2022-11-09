@@ -299,9 +299,7 @@ function circle(elements, definition, cid) {
 
 /*********************** Hull Constraints **********************/
 
-function hull(elements, definition, cid) {
-  const nodes = elements;
-
+function hull(nodes, definition, cid) {
   const ids = nodes.map(node => { return node._id; });
   const group = {'leaves': ids, '_cid': cid};
   if(definition.style) group.style = definition.style;
@@ -328,9 +326,7 @@ function cluster(elements, definition, cid) {
 
 /********************* Padding Constraints *********************/
 
-function padding(elements, definition, cid) {
-  const nodes = elements;
-
+function padding(nodes, definition, cid) {
   nodes.forEach(node => {
     node.pad = definition.amount;
     node.cid = definition.cid;
@@ -355,12 +351,11 @@ function CoLaAlignment(nodes, axis, offsets, cid) {
 };
 
 function CoLaPosition(left, right, axis, cid, gap) {
-  const constraint = {
+  return {
     'axis': axis,
     'left': left._id,
     'right': right._id,
     'gap': gap,
     '_type': cid
   };
-  return constraint;
 };

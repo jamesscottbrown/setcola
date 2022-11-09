@@ -238,20 +238,18 @@ function calculateDegree() {
 // (e.g., the node's parents).
 function getSources(node) {
   const incoming = getIncoming(node);
-  const sources = incoming.map(link => {
+  return incoming.map(link => {
     return (typeof link.source === 'object') ? link.source : _nodes[link.source];
   });
-  return sources;
 };
 
 // The list of nodes that have edges for which the input is the source 
 // (e.g., the node's children).
 function getTargets(node) {
   const outgoing = getOutgoing(node);
-  const targets = outgoing.map(link => {
+  return outgoing.map(link => {
     return (typeof link.target == 'object') ? link.target : _nodes[link.target];
   });
-  return targets;
 };
 
 // The list of nodes that have edges connected to the input (e.g., the 
@@ -266,24 +264,22 @@ function getNeighbors(node) {
 // connecting the node to its parents).
 function getIncoming(node) {
   const index = node._id;
-  const incoming = _links.filter(link => { 
+  return _links.filter(link => {
     const source = (typeof link.source === 'object') ? link.source._id : link.source;
     const target = (typeof link.target === 'object') ? link.target._id : link.target;
     return target == index && source !== index;
   });
-  return incoming;
 };
 
 // The list of edges that have the input as the source (e.g., edges 
 // connecting the node to its children).
 function getOutgoing(node) {
   const index = node._id;
-  const outgoing = _links.filter(link => { 
+  return _links.filter(link => {
     const source = (typeof link.source === 'object') ? link.source._id : link.source;
     const target = (typeof link.target === 'object') ? link.target._id : link.target;
     return source == index && target !== index; 
   });
-  return outgoing;
 };
 
 // The list of edges that contain the input (e.g., edges connecting the 
