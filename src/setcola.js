@@ -1,8 +1,8 @@
 import {computeSets} from './sets.js';
 import {computeConstraints} from './constraints.js';
 
-var _nodes, _links, _sets, _gap, _guides, _guideNodes, _groups, _constraintDefs, _output;
-var INDEX;
+let _nodes, _links, _sets, _gap, _guides, _guideNodes, _groups, _constraintDefs, _output;
+let INDEX;
 
 export function constraints(constraints) {
   if(constraints === undefined) {
@@ -86,8 +86,8 @@ export function layout() {
 
   // Generate the SetCoLa sets
   _sets = {};
-  for (var i = 0; i < _constraintDefs.length; i++) {
-    var result = generateSets(_constraintDefs[i]);
+  for (let i = 0; i < _constraintDefs.length; i++) {
+    const result = generateSets(_constraintDefs[i]);
     _sets[result.name] = result.sets;
   }
 
@@ -95,7 +95,7 @@ export function layout() {
   _constraintDefs.forEach(() => {
 
   });
-  var webcolaConstraints = [].concat.apply([], _constraintDefs.map(generateConstraints));
+  const webcolaConstraints = [].concat.apply([], _constraintDefs.map(generateConstraints));
 
   // Produce the output spec
   return {
@@ -109,7 +109,7 @@ export function layout() {
 };
 
 function generateGuides(guide) {
-  var node = { 
+  const node = { 
     '_guide': true,
     '_temp': true, 
     'fixed': true, 
@@ -122,7 +122,7 @@ function generateGuides(guide) {
   };
 
   // Save the position information from the guide.
-  var complete = false;
+  let complete = false;
   if(guide.hasOwnProperty('x')) {
     node.x = guide.x;
     node.boundary += 'x';
@@ -139,7 +139,7 @@ function generateGuides(guide) {
 
   // Save the name from the guide.
   if(guide.hasOwnProperty('name')) {
-    var found = _nodes.filter(node => { return node.name === guide.name; });
+    const found = _nodes.filter(node => { return node.name === guide.name; });
     if(found.length > 0) {
       console.error('A node with the name \'' + guide.name + '\' already exists.');
     } else {
@@ -156,7 +156,7 @@ function generateGuides(guide) {
 };
 
 function generateSets(constraintDef) {
-  var source = _nodes.filter(node => { return !node._temp; });
+  let source = _nodes.filter(node => { return !node._temp; });
   if(constraintDef.from && typeof constraintDef.from === 'string') {
     source = _sets[constraintDef.from];
   } else if(constraintDef.from) {
@@ -167,7 +167,7 @@ function generateSets(constraintDef) {
 };
 
 function generateConstraints(constraintDef) {
-  var results = [];
+  let results = [];
   (constraintDef.forEach || []).forEach(constraint => {
     (_sets[constraintDef.name] || []).forEach(elements => {
       results = results.concat(computeConstraints(elements, constraint, constraintDef.name, _gap, nodes, links, groups));
@@ -185,7 +185,7 @@ function computeBuiltInProperties(constraints) {
   _links.forEach(setLinkID);
 
   // Compute numeric properties for the nodes
-  var hasProperty = (c, p) => { return JSON.stringify(c).indexOf(p) != -1; };
+  const hasProperty = (c, p) => { return JSON.stringify(c).indexOf(p) != -1; };
   if(hasProperty(constraints, 'depth')) {
     calculateDepths();
     _nodes.forEach(node => { delete node.visited; });
@@ -215,13 +215,13 @@ function setLinkID(link) {
 function graphSources() {
   return _nodes.filter(node => {
     if(node.hasOwnProperty('_isSource')) return node._isSource;
-    var incoming = getIncoming(node).filter(n => { return n.source !== n.target; });
+    const incoming = getIncoming(node).filter(n => { return n.source !== n.target; });
     return incoming.length === 0;
   });
 };
 
 function calculateDepths() {
-  var roots = graphSources();
+  const roots = graphSources();
   if(roots.length === 0 && _nodes.length !== 0) {
     console.error('No roots exist, so cannot compute node depth. Please assign a \'_isSource\' property to the root and try again.');
   }
@@ -237,8 +237,8 @@ function calculateDegree() {
 // The list of nodes that have edges for which the input is the target 
 // (e.g., the node's parents).
 function getSources(node) {
-  var incoming = getIncoming(node);
-  var sources = incoming.map(link => {
+  const incoming = getIncoming(node);
+  const sources = incoming.map(link => {
     return (typeof link.source === 'object') ? link.source : _nodes[link.source];
   });
   return sources;
@@ -247,8 +247,8 @@ function getSources(node) {
 // The list of nodes that have edges for which the input is the source 
 // (e.g., the node's children).
 function getTargets(node) {
-  var outgoing = getOutgoing(node);
-  var targets = outgoing.map(link => {
+  const outgoing = getOutgoing(node);
+  const targets = outgoing.map(link => {
     return (typeof link.target == 'object') ? link.target : _nodes[link.target];
   });
   return targets;
@@ -257,18 +257,18 @@ function getTargets(node) {
 // The list of nodes that have edges connected to the input (e.g., the 
 // node's neighbors).
 function getNeighbors(node) {
-  var sources = node.sources || getSources(node);
-  var targets = node.targets || getTargets(node);
+  const sources = node.sources || getSources(node);
+  const targets = node.targets || getTargets(node);
   return sources.concat(targets);
 };
 
 // The list of edges that have the input as the target (e.g., edges 
 // connecting the node to its parents).
 function getIncoming(node) {
-  var index = node._id;
-  var incoming = _links.filter(link => { 
-    var source = (typeof link.source === 'object') ? link.source._id : link.source;
-    var target = (typeof link.target === 'object') ? link.target._id : link.target;
+  const index = node._id;
+  const incoming = _links.filter(link => { 
+    const source = (typeof link.source === 'object') ? link.source._id : link.source;
+    const target = (typeof link.target === 'object') ? link.target._id : link.target;
     return target == index && source !== index;
   });
   return incoming;
@@ -277,10 +277,10 @@ function getIncoming(node) {
 // The list of edges that have the input as the source (e.g., edges 
 // connecting the node to its children).
 function getOutgoing(node) {
-  var index = node._id;
-  var outgoing = _links.filter(link => { 
-    var source = (typeof link.source === 'object') ? link.source._id : link.source;
-    var target = (typeof link.target === 'object') ? link.target._id : link.target;
+  const index = node._id;
+  const outgoing = _links.filter(link => { 
+    const source = (typeof link.source === 'object') ? link.source._id : link.source;
+    const target = (typeof link.target === 'object') ? link.target._id : link.target;
     return source == index && target !== index; 
   });
   return outgoing;
@@ -289,15 +289,15 @@ function getOutgoing(node) {
 // The list of edges that contain the input (e.g., edges connecting the 
 // node to its neighbors).
 function getEdges(node) {
-  var incoming = node.incoming || getIncoming(node);
-  var outgoing = node.outgoing || getOutgoing(node);
+  const incoming = node.incoming || getIncoming(node);
+  const outgoing = node.outgoing || getOutgoing(node);
   return incoming.concat(outgoing);
 };
 
 // The number of neighbors for the current node.
 function getDegree(node) {
-  var incoming = node.incoming || getIncoming(node);
-  var outgoing = node.outgoing || getOutgoing(node);
+  const incoming = node.incoming || getIncoming(node);
+  const outgoing = node.outgoing || getOutgoing(node);
   return incoming.length + outgoing.length;
 };
 
@@ -310,7 +310,7 @@ function getDepth(node) {
 };
 
 function getFirstChild(node) {
-  var outgoing = node.outgoing || getOutgoing(node);
+  let outgoing = node.outgoing || getOutgoing(node);
   outgoing = outgoing.sort((a, b) => { return a._id - b._id; });
   outgoing = outgoing.filter(n => { return n.target !== n.source; });
   if(outgoing.length == 0) return null;

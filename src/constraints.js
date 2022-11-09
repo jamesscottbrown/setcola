@@ -1,4 +1,4 @@
-var _graphNodes, _graphLinks, _groups, _gap;
+let _graphNodes, _graphLinks, _groups, _gap;
 
 export function computeConstraints(elements, definition, cid, gap, graphNodes, graphLinks, graphGroups) {
   _graphNodes = graphNodes;
@@ -6,8 +6,8 @@ export function computeConstraints(elements, definition, cid, gap, graphNodes, g
   _groups = graphGroups; 
   _gap = gap;
 
-  var results = [];
-  var ID = cid + '_' + definition.constraint;
+  let results = [];
+  const ID = cid + '_' + definition.constraint;
   switch(definition.constraint) {
     case 'align':
       results = results.concat(alignment(elements, definition, ID));
@@ -40,10 +40,10 @@ export function computeConstraints(elements, definition, cid, gap, graphNodes, g
 /******************** Alignment Constraints ********************/
 
 function alignment(elements, definition, cid) {
-  var nodes = elements;
+  const nodes = elements;
 
   // Compute the alignment offset
-  var offsets = {};
+  const offsets = {};
   nodes.forEach(node => {
    switch(definition.orientation) {
      case 'top':
@@ -64,7 +64,7 @@ function alignment(elements, definition, cid) {
   });
 
   // Generate the CoLa constraints
-  var results = [];
+  let results = [];
   results = results.concat(CoLaAlignment(nodes, definition.axis, offsets, cid));
   return results;
 };
@@ -72,7 +72,7 @@ function alignment(elements, definition, cid) {
 /********************** Order Constraints **********************/
 
 function generateOrderFunc(definition) {
-  var order;
+  let order;
   if(definition.hasOwnProperty('order')) {
     if(definition.hasOwnProperty('reverse') && definition.reverse) definition.order.reverse();
     order = (n1, n2) => {
@@ -100,16 +100,16 @@ function orderElements(elements, definition, cid) {
 
 function orderNodes(nodes, definition, cid) {
   // Sort the nodes into groups
-  var order = generateOrderFunc(definition);
+  const order = generateOrderFunc(definition);
   nodes = nodes.sort(order);
 
   // Generate the CoLa constraints
-  var results = [];
-  var axis = definition.axis;
-  var gap = definition.gap ? definition.gap : _gap;
-  for(var i=0; i<nodes.length-1; i++) {
-    var left = nodes[i+1];
-    var right = nodes[i]
+  const results = [];
+  const axis = definition.axis;
+  const gap = definition.gap ? definition.gap : _gap;
+  for(let i=0; i<nodes.length-1; i++) {
+    const left = nodes[i+1];
+    const right = nodes[i];
     results.push(CoLaPosition(left, right, axis, cid, gap));
   };
   return results;
@@ -117,11 +117,11 @@ function orderNodes(nodes, definition, cid) {
 
 function orderSets(elements, definition, cid) {
   // Sort the elements into groups
-  var order = generateOrderFunc(definition);
+  const order = generateOrderFunc(definition);
   elements = elements.sort(order);
 
   // Compute the band for the nodes
-  var upperbound, offset, leftOffset, rightOffset, fixed;
+  let upperbound, offset, leftOffset, rightOffset, fixed;
   if(definition.band) {
     upperbound = elements.length;
     offset = definition.band;
@@ -137,11 +137,11 @@ function orderSets(elements, definition, cid) {
   }
 
   // Create a new node at the barrier of each band
-  var barriers = [];
-  var nodeSize = 1;
-  var prev = 0;
-  for(var i = 0; i <= upperbound; i++) {
-    var node = {
+  const barriers = [];
+  const nodeSize = 1;
+  const prev = 0;
+  for(let i = 0; i <= upperbound; i++) {
+    const node = {
       '_cid': cid,
       '_temp': true, 
       'fixed': fixed, 
@@ -151,14 +151,14 @@ function orderSets(elements, definition, cid) {
     };
     node.name = cid + '_boundary_' + i;
 
-    var tempOffset = _graphNodes().filter(node => { return node._temp; }).length;
+    const tempOffset = _graphNodes().filter(node => { return node._temp; }).length;
 
-    var other = definition.axis == 'x' ? 'y' : 'x';
+    const other = definition.axis == 'x' ? 'y' : 'x';
     node.boundary = definition.axis;
     if(definition.band) {
       node[definition.axis] = i*offset;
     } else {
-      var offsetTest = (Math.sqrt(elements[i+1].length) + 2) * elements[i+1][0].size + prev;
+      const offsetTest = (Math.sqrt(elements[i+1].length) + 2) * elements[i+1][0].size + prev;
       node[definition.axis] = i*offset;
     }
     node[other] = tempOffset*nodeSize*10;
@@ -168,14 +168,14 @@ function orderSets(elements, definition, cid) {
   };
 
   // Compute the constraints to order the nodes
-  var results = [];
+  const results = [];
   elements.forEach((set, index) => {
-    var left = barriers[index+leftOffset];
-    var right = barriers[index+rightOffset];
-    var gap = definition.gap ? definition.gap : _gap;
+    const left = barriers[index+leftOffset];
+    const right = barriers[index+rightOffset];
+    const gap = definition.gap ? definition.gap : _gap;
 
     // Flatten the sets to get to the base nodes.
-    var nodes = [].concat.apply([], set);
+    const nodes = [].concat.apply([], set);
     nodes.forEach(node => {
       if(definition.hasOwnProperty('band') || index != 0) {
         results.push(CoLaPosition(left, node, definition.axis, cid, gap));
@@ -190,16 +190,16 @@ function orderSets(elements, definition, cid) {
 };
 
 function boundaryConstraints(boundaries, definition, cid) {
-  var id = cid + '_boundaryDistance';
-  var c = [];
+  const id = cid + '_boundaryDistance';
+  const c = [];
   boundaries.forEach((boundary, index) => {
 
-    for (var i = index+1; i < boundaries.length; i++) {
-      var left = boundaries[index];
-      var right = boundaries[i];
-      var axis = definition.axis;
-      var gap = definition.gap * (i - index);
-      var newConstraint = CoLaPosition(left, right, axis, id, gap);
+    for (let i = index+1; i < boundaries.length; i++) {
+      const left = boundaries[index];
+      const right = boundaries[i];
+      const axis = definition.axis;
+      const gap = definition.gap * (i - index);
+      const newConstraint = CoLaPosition(left, right, axis, id, gap);
       newConstraint.equality = true;
       if(definition.band) {
         newConstraint.gap = definition.band
@@ -214,7 +214,7 @@ function boundaryConstraints(boundaries, definition, cid) {
 /********************* Position Constraints ********************/
 
 function position(elements, definition, cid) {
-  var nodes;
+  let nodes;
   if(elements[0] instanceof Array) {
     nodes = [].concat.apply([], elements);
   } else {
@@ -222,14 +222,14 @@ function position(elements, definition, cid) {
   }
 
   // Get the guide the elements are positioned relative to.
-  var guide = _graphNodes().filter(node => {
+  const guide = _graphNodes().filter(node => {
     return node.name === definition.of && node._guide;
   })[0];
 
   // Create the position constraints relative to the temp node
-  var results = [];
-  var gap = definition.gap || _gap;
-  for(var i=0; i<nodes.length; i++) {
+  const results = [];
+  const gap = definition.gap || _gap;
+  for(let i=0; i<nodes.length; i++) {
     switch(definition.position) {
       case 'left':
         results.push(CoLaPosition(nodes[i], guide, 'x', cid, gap));
@@ -254,33 +254,33 @@ function position(elements, definition, cid) {
 /********************** Circle Constraints *********************/
 
 function circle(elements, definition, cid) {
-  var nodes = elements;
+  const nodes = elements;
 
   // Constants for computing edge length
-  var gap = definition.gap || _gap;
-  var angle = 360/nodes.length;
-  var edge = Math.sqrt(2*(gap**2) - 2*(gap**2)*Math.cos(angle/180*Math.PI));
+  const gap = definition.gap || _gap;
+  const angle = 360/nodes.length;
+  const edge = Math.sqrt(2*(gap**2) - 2*(gap**2)*Math.cos(angle/180*Math.PI));
 
   // Label links that have at least one node in the circle layout
   _graphLinks().forEach(link => {
-    var source = _graphNodes()[link.source];
-    var target = _graphNodes()[link.target];
+    const source = _graphNodes()[link.source];
+    const target = _graphNodes()[link.target];
     if(nodes.indexOf(source) != -1 || nodes.indexOf(target) != -1) {
       link.circle = true;
     }
   });
 
   // Create links for every node in the circle
-  var links = [];
-  for (var i = 0; i < nodes.length; i++) {
-    var index = i==0 ? nodes.length - 1 : i-1;
-    var node = _graphNodes().indexOf(nodes[index]);
-    var next = _graphNodes().indexOf(nodes[i]);
+  const links = [];
+  for (let i = 0; i < nodes.length; i++) {
+    const index = i==0 ? nodes.length - 1 : i-1;
+    const node = _graphNodes().indexOf(nodes[index]);
+    const next = _graphNodes().indexOf(nodes[i]);
     links.push({'source': node, 'target': next, 'length': edge, '_temp': true});
   };
 
   // Create or extract the center point.
-  var center;
+  let center;
   switch(definition.around) {
     case 'center':
       center = {'name': cid + '_center', '_temp': true, '_cid': cid};
@@ -300,10 +300,10 @@ function circle(elements, definition, cid) {
 /*********************** Hull Constraints **********************/
 
 function hull(elements, definition, cid) {
-  var nodes = elements;
+  const nodes = elements;
 
-  var ids = nodes.map(node => { return node._id; });
-  var group = {'leaves': ids, '_cid': cid};
+  const ids = nodes.map(node => { return node._id; });
+  const group = {'leaves': ids, '_cid': cid};
   if(definition.style) group.style = definition.style;
   _groups(_groups().concat([group]));
 };
@@ -311,10 +311,10 @@ function hull(elements, definition, cid) {
 /********************* Cluster Constraints *********************/
 
 function cluster(elements, definition, cid) {
-  var nodes = elements;
+  const nodes = elements;
 
   nodes.forEach((node, index) => {
-    for (var i = index+1; i < nodes.length; i++) {
+    for (let i = index+1; i < nodes.length; i++) {
       _graphLinks(_graphLinks().concat([{
         'source': node._id, 
         'target': nodes[i]._id, 
@@ -329,7 +329,7 @@ function cluster(elements, definition, cid) {
 /********************* Padding Constraints *********************/
 
 function padding(elements, definition, cid) {
-  var nodes = elements;
+  const nodes = elements;
 
   nodes.forEach(node => {
     node.pad = definition.amount;
@@ -342,7 +342,7 @@ function padding(elements, definition, cid) {
 /****************** Generate CoLa Constraints ******************/
 
 function CoLaAlignment(nodes, axis, offsets, cid) {
-  var constraint = {
+  const constraint = {
     'type': 'alignment',
     'axis': (axis == 'x') ? 'y' : 'x',
     'offsets': [],
@@ -355,7 +355,7 @@ function CoLaAlignment(nodes, axis, offsets, cid) {
 };
 
 function CoLaPosition(left, right, axis, cid, gap) {
-  var constraint = {
+  const constraint = {
     'axis': axis,
     'left': left._id,
     'right': right._id,

@@ -1,8 +1,8 @@
-var _sets;
+let _sets;
 
 export function computeSets(elements, definition, sets, index) {
   _sets = sets;
-  var set = [];
+  let set = [];
   if(!definition) {
     set = [elements];
   } else if(definition.partition) {
@@ -28,11 +28,11 @@ function contains(list, value) {
 };
 
 function partitionSet(elements, definition) {
-  var partitionSets = {};
+  const partitionSets = {};
 
   // Split the elements into sets based on their partition property.
   elements.forEach(element => {
-    var partitionValue = element[definition.partition];
+    let partitionValue = element[definition.partition];
     if(definition.partition === 'parent' && partitionValue) {
       partitionValue = partitionValue._id; 
     }
@@ -54,9 +54,9 @@ function partitionSet(elements, definition) {
 };
 
 function collectSet(elements, definition) {
-  var collectSets = {};
+  const collectSets = {};
   elements.forEach(element => {
-    var set = [];
+    let set = [];
     definition.collect.forEach(expr => {
       switch(expr) {
         case 'node':
@@ -77,24 +77,24 @@ function collectSet(elements, definition) {
         default:
           if(expr.indexOf('sort') !== -1) {
            
-            var children = element.getTargets();
-            var map = children.map(el => { return el.value; });
-            var sorted = map.sort();
-            var first = children.filter(el => {
+            let children = element.getTargets();
+            const map = children.map(el => { return el.value; });
+            const sorted = map.sort();
+            const first = children.filter(el => {
               return el.value === sorted[0];
             });
             if(first[0]) set = set.concat(first[0]);
           
           } else if(expr.indexOf('min') !== -1) {
           
-            var source = expr.split(/\(|,|\)/g)[2];
-            var property = expr.split(/\(|,|\)/g)[1].replace(/'/g, '');
+            const source = expr.split(/\(|,|\)/g)[2];
+            const property = expr.split(/\(|,|\)/g)[1].replace(/'/g, '');
 
-            var node;
+            let node;
             switch(source) {
               case 'node.children':
-                var children = element.getTargets();
-                var minimum = Math.min.apply(null, children.map(n => { return n[property]; }));
+                let children = element.getTargets();
+                const minimum = Math.min.apply(null, children.map(n => { return n[property]; }));
                 node = children.filter(n => { return n[property] === minimum; })[0];
                 if(!element[property]) {
                   // Do nothing....
@@ -124,14 +124,14 @@ function collectSet(elements, definition) {
 };
 
 function exprSet(elements, definition, index) {
-  var set = [];
+  const set = [];
   elements.forEach(element => {
-    var matches = definition.expr.match(/node\.[a-zA-Z.0-9]+/g);
-    var expr = definition.expr;
+    const matches = definition.expr.match(/node\.[a-zA-Z.0-9]+/g);
+    let expr = definition.expr;
     matches.forEach(match => {
-      var props = match.replace('node.', '').split('.');
-      var result;
-      for (var i = 0; i < props.length; i++) {
+      const props = match.replace('node.', '').split('.');
+      let result;
+      for (let i = 0; i < props.length; i++) {
         result = element[props[i]];
       }
       expr = expr.replace(match, JSON.stringify(result));
