@@ -44,7 +44,7 @@ function alignment(elements, definition, cid) {
 
   // Compute the alignment offset
   var offsets = {};
-  nodes.forEach(function(node) {
+  nodes.forEach(node => {
    switch(definition.orientation) {
      case 'top':
       offsets[node._id] = node.height/2;
@@ -75,15 +75,15 @@ function generateOrderFunc(definition) {
   var order;
   if(definition.hasOwnProperty('order')) {
     if(definition.hasOwnProperty('reverse') && definition.reverse) definition.order.reverse();
-    order = function(n1,n2) {
+    order = (n1, n2) => {
       return definition.order.indexOf(n1[definition.by]) - definition.order.indexOf(n2[definition.by]);
     };
   } else if(definition.hasOwnProperty('reverse') && definition.reverse) {
-    order = function(n1,n2) {
+    order = (n1, n2) => {
       return n1[definition.by] - n2[definition.by];
     };
   } else {
-    order = function(n1,n2) {
+    order = (n1, n2) => {
       return n2[definition.by] - n1[definition.by];
     };
   }
@@ -151,7 +151,7 @@ function orderSets(elements, definition, cid) {
     };
     node.name = cid + '_boundary_' + i;
 
-    var tempOffset = _graphNodes().filter(function(node) { return node._temp; }).length;
+    var tempOffset = _graphNodes().filter(node => { return node._temp; }).length;
 
     var other = definition.axis == 'x' ? 'y' : 'x';
     node.boundary = definition.axis;
@@ -169,14 +169,14 @@ function orderSets(elements, definition, cid) {
 
   // Compute the constraints to order the nodes
   var results = [];
-  elements.forEach(function(set, index) {
+  elements.forEach((set, index) => {
     var left = barriers[index+leftOffset];
     var right = barriers[index+rightOffset];
     var gap = definition.gap ? definition.gap : _gap;
 
     // Flatten the sets to get to the base nodes.
     var nodes = [].concat.apply([], set);
-    nodes.forEach(function(node) {
+    nodes.forEach(node => {
       if(definition.hasOwnProperty('band') || index != 0) {
         results.push(CoLaPosition(left, node, definition.axis, cid, gap));
       }
@@ -192,7 +192,7 @@ function orderSets(elements, definition, cid) {
 function boundaryConstraints(boundaries, definition, cid) {
   var id = cid + '_boundaryDistance';
   var c = [];
-  boundaries.forEach(function(boundary,index) {
+  boundaries.forEach((boundary, index) => {
 
     for (var i = index+1; i < boundaries.length; i++) {
       var left = boundaries[index];
@@ -222,7 +222,7 @@ function position(elements, definition, cid) {
   }
 
   // Get the guide the elements are positioned relative to.
-  var guide = _graphNodes().filter(function(node) {
+  var guide = _graphNodes().filter(node => {
     return node.name === definition.of && node._guide;
   })[0];
 
@@ -262,7 +262,7 @@ function circle(elements, definition, cid) {
   var edge = Math.sqrt(2*(gap**2) - 2*(gap**2)*Math.cos(angle/180*Math.PI));
 
   // Label links that have at least one node in the circle layout
-  _graphLinks().forEach(function(link) {
+  _graphLinks().forEach(link => {
     var source = _graphNodes()[link.source];
     var target = _graphNodes()[link.target];
     if(nodes.indexOf(source) != -1 || nodes.indexOf(target) != -1) {
@@ -291,7 +291,7 @@ function circle(elements, definition, cid) {
   }
 
   // Create a new link from the center to all nodes in the circle
-  nodes.forEach(function(node) {
+  nodes.forEach(node => {
     links.push({'source': center._id, 'target': node._id, 'length': gap, '_temp': true});
   });
   _graphLinks(_graphLinks().concat(links));
@@ -302,7 +302,7 @@ function circle(elements, definition, cid) {
 function hull(elements, definition, cid) {
   var nodes = elements;
 
-  var ids = nodes.map(function(node) { return node._id; });
+  var ids = nodes.map(node => { return node._id; });
   var group = {'leaves': ids, '_cid': cid};
   if(definition.style) group.style = definition.style;
   _groups(_groups().concat([group]));
@@ -313,7 +313,7 @@ function hull(elements, definition, cid) {
 function cluster(elements, definition, cid) {
   var nodes = elements;
 
-  nodes.forEach(function(node, index) {
+  nodes.forEach((node, index) => {
     for (var i = index+1; i < nodes.length; i++) {
       _graphLinks(_graphLinks().concat([{
         'source': node._id, 
@@ -331,7 +331,7 @@ function cluster(elements, definition, cid) {
 function padding(elements, definition, cid) {
   var nodes = elements;
 
-  nodes.forEach(function(node) {
+  nodes.forEach(node => {
     node.pad = definition.amount;
     node.cid = definition.cid;
     node.spacing = true;
@@ -348,7 +348,7 @@ function CoLaAlignment(nodes, axis, offsets, cid) {
     'offsets': [],
     '_type': cid
   };
-  nodes.forEach(function(node) {
+  nodes.forEach(node => {
     constraint.offsets.push({'node': node._id, 'offset': offsets[node._id]});
   });
   return constraint;

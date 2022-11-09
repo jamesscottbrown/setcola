@@ -16,7 +16,7 @@ export function computeSets(elements, definition, sets, index) {
     set = existingSet(elements, definition);
     set._setName = definition;
   } else {
-    definition.forEach(function(subdef, index) {
+    definition.forEach((subdef, index) => {
       set.push(computeSets(elements, subdef, _sets, index));
     });
   }
@@ -31,7 +31,7 @@ function partitionSet(elements, definition) {
   var partitionSets = {};
 
   // Split the elements into sets based on their partition property.
-  elements.forEach(function(element) {
+  elements.forEach(element => {
     var partitionValue = element[definition.partition];
     if(definition.partition === 'parent' && partitionValue) {
       partitionValue = partitionValue._id; 
@@ -43,11 +43,11 @@ function partitionSet(elements, definition) {
   });
 
   // Lift the partition property to a property of the set.
-  Object.keys(partitionSets).forEach(function(setName) {
+  Object.keys(partitionSets).forEach(setName => {
     partitionSets[setName][definition.partition] = partitionSets[setName][0][definition.partition];
   });
 
-  return Object.keys(partitionSets).map(function(setName) { 
+  return Object.keys(partitionSets).map(setName => { 
     partitionSets[setName]._setName = setName;
     return partitionSets[setName]; 
   });
@@ -55,9 +55,9 @@ function partitionSet(elements, definition) {
 
 function collectSet(elements, definition) {
   var collectSets = {};
-  elements.forEach(function(element) {
+  elements.forEach(element => {
     var set = [];
-    definition.collect.forEach(function(expr) {
+    definition.collect.forEach(expr => {
       switch(expr) {
         case 'node':
           set.push(element);
@@ -78,9 +78,9 @@ function collectSet(elements, definition) {
           if(expr.indexOf('sort') !== -1) {
            
             var children = element.getTargets();
-            var map = children.map(function(el) { return el.value; });
+            var map = children.map(el => { return el.value; });
             var sorted = map.sort();
-            var first = children.filter(function(el) {
+            var first = children.filter(el => {
               return el.value === sorted[0];
             });
             if(first[0]) set = set.concat(first[0]);
@@ -94,8 +94,8 @@ function collectSet(elements, definition) {
             switch(source) {
               case 'node.children':
                 var children = element.getTargets();
-                var minimum = Math.min.apply(null, children.map(function(n) { return n[property]; }));
-                node = children.filter(function(n) { return n[property] === minimum; })[0];
+                var minimum = Math.min.apply(null, children.map(n => { return n[property]; }));
+                node = children.filter(n => { return n[property] === minimum; })[0];
                 if(!element[property]) {
                   // Do nothing....
                 } else if(node && node[property] < element[property]) {
@@ -120,15 +120,15 @@ function collectSet(elements, definition) {
     });
     if(set.length > 1) collectSets[element._id] = set;
   });
-  return Object.keys(collectSets).map(function(setName) { return collectSets[setName]; });
+  return Object.keys(collectSets).map(setName => { return collectSets[setName]; });
 };
 
 function exprSet(elements, definition, index) {
   var set = [];
-  elements.forEach(function(element) {
+  elements.forEach(element => {
     var matches = definition.expr.match(/node\.[a-zA-Z.0-9]+/g);
     var expr = definition.expr;
-    matches.forEach(function(match) {
+    matches.forEach(match => {
       var props = match.replace('node.', '').split('.');
       var result;
       for (var i = 0; i < props.length; i++) {

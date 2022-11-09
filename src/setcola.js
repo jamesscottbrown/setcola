@@ -36,7 +36,7 @@ export function guides(guides) {
     return _guides;
   } else {
     _guides = guides;
-    _nodes = _nodes.filter(function(node) { return !node._guide; }); // Remove previous guides.
+    _nodes = _nodes.filter(node => { return !node._guide; }); // Remove previous guides.
     guides.map(generateGuides);
     return this;
   }
@@ -77,9 +77,9 @@ export function layout() {
   if(!_gap) gap(20);
 
   // Remove previously added internal properties.
-  _nodes = _nodes.filter(function(node) { return !node._cid; });
-  _links = _links.filter(function(link) { return !link._cid; });
-  _groups = _groups.filter(function(group) { return !group._cid; });
+  _nodes = _nodes.filter(node => { return !node._cid; });
+  _links = _links.filter(link => { return !link._cid; });
+  _groups = _groups.filter(group => { return !group._cid; });
 
   // Compute additional graph properties as needed
   computeBuiltInProperties(_constraintDefs);
@@ -92,7 +92,7 @@ export function layout() {
   }
 
   // Generate the WebCoLa constraints
-  _constraintDefs.forEach(function() {
+  _constraintDefs.forEach(() => {
 
   });
   var webcolaConstraints = [].concat.apply([], _constraintDefs.map(generateConstraints));
@@ -139,7 +139,7 @@ function generateGuides(guide) {
 
   // Save the name from the guide.
   if(guide.hasOwnProperty('name')) {
-    var found = _nodes.filter(function(node) { return node.name === guide.name; });
+    var found = _nodes.filter(node => { return node.name === guide.name; });
     if(found.length > 0) {
       console.error('A node with the name \'' + guide.name + '\' already exists.');
     } else {
@@ -156,7 +156,7 @@ function generateGuides(guide) {
 };
 
 function generateSets(constraintDef) {
-  var source = _nodes.filter(function(node) { return !node._temp; });
+  var source = _nodes.filter(node => { return !node._temp; });
   if(constraintDef.from && typeof constraintDef.from === 'string') {
     source = _sets[constraintDef.from];
   } else if(constraintDef.from) {
@@ -168,8 +168,8 @@ function generateSets(constraintDef) {
 
 function generateConstraints(constraintDef) {
   var results = [];
-  (constraintDef.forEach || []).forEach(function(constraint) {
-    (_sets[constraintDef.name] || []).forEach(function(elements) {
+  (constraintDef.forEach || []).forEach(constraint => {
+    (_sets[constraintDef.name] || []).forEach(elements => {
       results = results.concat(computeConstraints(elements, constraint, constraintDef.name, _gap, nodes, links, groups));
     });    
   });
@@ -185,15 +185,15 @@ function computeBuiltInProperties(constraints) {
   _links.forEach(setLinkID);
 
   // Compute numeric properties for the nodes
-  var hasProperty = function(c, p) { return JSON.stringify(c).indexOf(p) != -1; };
+  var hasProperty = (c, p) => { return JSON.stringify(c).indexOf(p) != -1; };
   if(hasProperty(constraints, 'depth')) {
     calculateDepths();
-    _nodes.forEach(function(node) { delete node.visited; });
+    _nodes.forEach(node => { delete node.visited; });
   }
   if(hasProperty(constraints, 'degree')) calculateDegree();
 
   // Add accessors to get properties returning graph nodes/edges
-  _nodes.forEach(function(node) {
+  _nodes.forEach(node => {
     node.getSources = function() { return getSources(this); };
     node.getTargets = function() { return getTargets(this); };
     node.getNeighbors = function() { return getNeighbors(this); };
@@ -213,9 +213,9 @@ function setLinkID(link) {
 };
 
 function graphSources() {
-  return _nodes.filter(function(node) {
+  return _nodes.filter(node => {
     if(node.hasOwnProperty('_isSource')) return node._isSource;
-    var incoming = getIncoming(node).filter(function(n) { return n.source !== n.target; });
+    var incoming = getIncoming(node).filter(n => { return n.source !== n.target; });
     return incoming.length === 0;
   });
 };
@@ -229,7 +229,7 @@ function calculateDepths() {
 };
 
 function calculateDegree() {
-  _nodes.forEach(function(node) {
+  _nodes.forEach(node => {
     node.degree = node.degree || getDegree(node);
   });
 };
@@ -238,7 +238,7 @@ function calculateDegree() {
 // (e.g., the node's parents).
 function getSources(node) {
   var incoming = getIncoming(node);
-  var sources = incoming.map(function(link) {
+  var sources = incoming.map(link => {
     return (typeof link.source === 'object') ? link.source : _nodes[link.source];
   });
   return sources;
@@ -248,7 +248,7 @@ function getSources(node) {
 // (e.g., the node's children).
 function getTargets(node) {
   var outgoing = getOutgoing(node);
-  var targets = outgoing.map(function(link) {
+  var targets = outgoing.map(link => {
     return (typeof link.target == 'object') ? link.target : _nodes[link.target];
   });
   return targets;
@@ -266,7 +266,7 @@ function getNeighbors(node) {
 // connecting the node to its parents).
 function getIncoming(node) {
   var index = node._id;
-  var incoming = _links.filter(function(link) { 
+  var incoming = _links.filter(link => { 
     var source = (typeof link.source === 'object') ? link.source._id : link.source;
     var target = (typeof link.target === 'object') ? link.target._id : link.target;
     return target == index && source !== index;
@@ -278,7 +278,7 @@ function getIncoming(node) {
 // connecting the node to its children).
 function getOutgoing(node) {
   var index = node._id;
-  var outgoing = _links.filter(function(link) { 
+  var outgoing = _links.filter(link => { 
     var source = (typeof link.source === 'object') ? link.source._id : link.source;
     var target = (typeof link.target === 'object') ? link.target._id : link.target;
     return source == index && target !== index; 
@@ -311,8 +311,8 @@ function getDepth(node) {
 
 function getFirstChild(node) {
   var outgoing = node.outgoing || getOutgoing(node);
-  outgoing = outgoing.sort(function(a,b) { return a._id - b._id; });
-  outgoing = outgoing.filter(function(n) { return n.target !== n.source; });
+  outgoing = outgoing.sort((a, b) => { return a._id - b._id; });
+  outgoing = outgoing.filter(n => { return n.target !== n.source; });
   if(outgoing.length == 0) return null;
   return _nodes[outgoing[0].target];
 };
