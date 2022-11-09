@@ -32,10 +32,10 @@ export function computeConstraints(elements, definition, cid, gap, graphNodes, g
       break;
     default:
       console.error(`Unknown constraint type '${definition.type}'`);
-  };
+  }
 
   return results;
-};
+}
 
 /******************** Alignment Constraints ********************/
 
@@ -67,7 +67,7 @@ function alignment(elements, definition, cid) {
   let results = [];
   results = results.concat(CoLaAlignment(nodes, definition.axis, offsets, cid));
   return results;
-};
+}
 
 /********************** Order Constraints **********************/
 
@@ -88,7 +88,7 @@ function generateOrderFunc(definition) {
     };
   }
   return order;
-};
+}
 
 function orderElements(elements, definition, cid) {
   if(elements[0] instanceof Array) {
@@ -96,7 +96,7 @@ function orderElements(elements, definition, cid) {
   } else {
    return orderNodes(elements, definition, cid);
   }
-};
+}
 
 function orderNodes(nodes, definition, cid) {
   // Sort the nodes into groups
@@ -111,9 +111,9 @@ function orderNodes(nodes, definition, cid) {
     const left = nodes[i+1];
     const right = nodes[i];
     results.push(CoLaPosition(left, right, axis, cid, gap));
-  };
+  }
   return results;
-};
+}
 
 function orderSets(elements, definition, cid) {
   // Sort the elements into groups
@@ -165,7 +165,7 @@ function orderSets(elements, definition, cid) {
     
     barriers.push(node);
     _graphNodes(_graphNodes().concat([node]));
-  };
+  }
 
   // Compute the constraints to order the nodes
   const results = [];
@@ -187,7 +187,7 @@ function orderSets(elements, definition, cid) {
   });
 
   return results;
-};
+}
 
 function boundaryConstraints(boundaries, definition, cid) {
   const id = `${cid}_boundaryDistance`;
@@ -209,7 +209,7 @@ function boundaryConstraints(boundaries, definition, cid) {
 
   });
   return c;
-};
+}
 
 /********************* Position Constraints ********************/
 
@@ -245,11 +245,11 @@ function position(elements, definition, cid) {
         break;
       default:
         console.error(`Unknown position: '${definition.position}'`);
-    };
-  };
+    }
+  }
 
   return results;
-};
+}
 
 /********************** Circle Constraints *********************/
 
@@ -277,7 +277,7 @@ function circle(elements, definition, cid) {
     const node = _graphNodes().indexOf(nodes[index]);
     const next = _graphNodes().indexOf(nodes[i]);
     links.push({'source': node, 'target': next, 'length': edge, '_temp': true});
-  };
+  }
 
   // Create or extract the center point.
   let center;
@@ -295,7 +295,7 @@ function circle(elements, definition, cid) {
     links.push({'source': center._id, 'target': node._id, 'length': gap, '_temp': true});
   });
   _graphLinks(_graphLinks().concat(links));
-};
+}
 
 /*********************** Hull Constraints **********************/
 
@@ -304,7 +304,7 @@ function hull(nodes, definition, cid) {
   const group = {'leaves': ids, '_cid': cid};
   if(definition.style) group.style = definition.style;
   _groups(_groups().concat([group]));
-};
+}
 
 /********************* Cluster Constraints *********************/
 
@@ -322,7 +322,7 @@ function cluster(elements, definition, cid) {
       }]));
     }
   });
-};
+}
 
 /********************* Padding Constraints *********************/
 
@@ -333,7 +333,7 @@ function padding(nodes, definition, cid) {
     node.spacing = true;
   });
 
-};
+}
 
 /****************** Generate CoLa Constraints ******************/
 
@@ -348,7 +348,7 @@ function CoLaAlignment(nodes, axis, offsets, cid) {
     constraint.offsets.push({'node': node._id, 'offset': offsets[node._id]});
   });
   return constraint;
-};
+}
 
 function CoLaPosition(left, right, axis, cid, gap) {
   return {
@@ -358,4 +358,4 @@ function CoLaPosition(left, right, axis, cid, gap) {
     'gap': gap,
     '_type': cid
   };
-};
+}

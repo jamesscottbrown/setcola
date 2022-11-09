@@ -21,11 +21,11 @@ export function computeSets(elements, definition, sets, index) {
     });
   }
   return set;
-};
+}
 
 function contains(list, value) {
   return list.indexOf(value) !== -1;
-};
+}
 
 function partitionSet(elements, definition) {
   const partitionSets = {};
@@ -51,7 +51,7 @@ function partitionSet(elements, definition) {
     partitionSets[setName]._setName = setName;
     return partitionSets[setName]; 
   });
-};
+}
 
 function collectSet(elements, definition) {
   const collectSets = {};
@@ -121,7 +121,7 @@ function collectSet(elements, definition) {
     if(set.length > 1) collectSets[element._id] = set;
   });
   return Object.keys(collectSets).map(setName => { return collectSets[setName]; });
-};
+}
 
 function exprSet(elements, definition, index) {
   const set = [];
@@ -140,8 +140,8 @@ function exprSet(elements, definition, index) {
   });
   set._exprIndex = index;
   return set;
-};
+}
 
 function existingSet(elements, definition) {
   return _sets[definition];
-};
+}
