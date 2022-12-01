@@ -1,6 +1,9 @@
 import {computeSets} from './sets.js';
 import {computeConstraints} from './constraints.js';
 
+import * as setcola from "./setcola.js";
+
+let globalState = {};
 let _nodes, _links, _sets, _gap, _guides, _guideNodes, _groups, _constraintDefs, _output;
 let INDEX;
 
@@ -9,7 +12,7 @@ export function constraints(constraints) {
     return _constraintDefs;
   } else {
     _constraintDefs = constraints;
-    return this;
+    return setcola;
   }
 }
 
@@ -18,7 +21,7 @@ export function gap(gap) {
     return _gap;
   } else {
     _gap = gap;
-    return this;
+    return setcola;
   }
 }
 
@@ -27,7 +30,7 @@ export function groups(groups) {
     return _groups;
   } else {
     _groups = groups;
-    return this;
+    return setcola;
   }
 }
 
@@ -38,7 +41,7 @@ export function guides(guides) {
     _guides = guides;
     _nodes = _nodes.filter(node => { return !node._guide; }); // Remove previous guides.
     guides.map(generateGuides);
-    return this;
+    return setcola;
   }
 }
 
@@ -48,7 +51,7 @@ export function links(links) {
   } else {
     _links = links;
     _links.map(setLinkID);
-    return this;
+    return setcola;
   }
 }
 
@@ -58,7 +61,7 @@ export function nodes(nodes) {
   } else {
     _nodes = nodes;
     _nodes.map(setID);
-    return this;
+    return setcola;
   }
 }
 
